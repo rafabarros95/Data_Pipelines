@@ -74,7 +74,7 @@ class DataPipeline:
         self.logger.info("ETL pipeline completed successfully!")
 
 
-extracted_obj = DataPipeline(config_filepath="config.json")
+extracted_obj = DataPipeline(config_filepath="../config.json")
 print(extracted_obj.source)
 print(extracted_obj.destination)
 print(extracted_obj.run_pipeline())
