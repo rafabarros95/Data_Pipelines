@@ -1,4 +1,4 @@
-"""Data Engineering Project about extracting data about Covid-19 statistics through API, do the ETL stuff and load that within a database, probably postgresSQL"""
+"""Data Engineering Project about extracting data about Covid-19 statistics through API (USA Data), do the ETL stuff and load that within a database, probably postgresSQL"""
 
 import json
 import logging

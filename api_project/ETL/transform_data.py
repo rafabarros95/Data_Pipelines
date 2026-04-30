@@ -3,9 +3,9 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-
 import pandas as pd
 
+from api_project.ETL.extract_data import Covid_Api_Extract_Data
 logger = logging.getLogger(__name__)
 
 __all__ = ["TransformData"]
@@ -95,3 +95,16 @@ class TransformData:
         logger.info("Saving DataFrame to %s", out_path)
         df.to_csv(out_path, index=False)
         return out_path
+
+    def run(self) -> Path:
+        reports_df = self.load_reports_df()
+        cities_df = self.reports_df_to_cities_df(reports_df)
+        return self.save_df(cities_df, "cities_df.csv")
+
+# local testing
+if __name__ == "__main__":
+
+    logger.info("Running TransformData...")
+    transformer = TransformData()
+    transformer.run()
+    logger.info("Done!")

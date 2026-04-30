@@ -5,27 +5,20 @@
 """
 import os
 from pathlib import Path
-
+from dotenv import load_dotenv
 import psycopg
 
 def load_env() -> None:
     """Load KEY=VALUE from Data_Pipelines/.env into os.environ if not already set."""
-    env_path = Path(__file__).resolve().parents[2] / ".env"
+    env_path = Path(__file__).resolve().parents[2] / ".env" # read the .env file to get the credentials for the database connection
     if not env_path.exists():
         return
-
-    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if not line or line.startswith("#") or "=" not in line:
+    for line in env_path.read_text().splitlines():
+        if not line.strip() or line.strip().startswith("#"):
             continue
-
-        key, value = line.split("=", 1)
-        key = key.strip()
-        value = value.strip().strip('"').strip("'")
-
-        if key and key not in os.environ:
+        key, sep, value = line.partition("=")
+        if sep and key and value and key not in os.environ:
             os.environ[key] = value
-
 
 def connect_to_db() -> psycopg.Connection:
     """Create and return a Postgres connection using env vars.
@@ -58,3 +51,17 @@ def connect_to_db() -> psycopg.Connection:
         user=user,
         password=password,
     )
+
+# local testing
+if __name__ == "__main__":
+
+    load_env()
+    print(f"Connecting to Postgres database at {os.environ['POSTGRES_DB']}...")
+    print(f"Connecting to Postgres user at {os.environ['POSTGRES_USER']}...")
+    print(f"Connecting to Postgres host at {os.environ['POSTGRES_HOST']}...")
+
+    try:
+        with connect_to_db() as conn:
+            print("Successfully connected to Postgres database.")
+    except Exception as e:
+        print(f"Failed to connect to Postgres database: {e}")

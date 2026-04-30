@@ -2,16 +2,19 @@ services:
   postgres:
     image: postgres:16
     container_name: data_pipelines_postgres
+    env_file:
+      - .env
     environment:
-      POSTGRES_DB: covid_19_db
-      POSTGRES_USER: rb
-      POSTGRES_PASSWORD: covid123
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U your_user -d your_db_name"]
+      # Use $$ to keep the variable expansion for the container shell (avoid Compose-level substitution)
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 3s
       retries: 20
